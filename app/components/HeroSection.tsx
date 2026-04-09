@@ -146,6 +146,7 @@ export default function HeroSection() {
               fill 
               className="object-contain drop-shadow-2xl"
               priority
+              unoptimized
             />
           </motion.div>
 
