@@ -6,6 +6,9 @@ import HeroSection from './components/HeroSection';
 import { projects } from './data/projects';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+
+const CyberGame = dynamic(() => import('../components/CyberGame'), { ssr: false });
 
 export default function Home() {
   const router = useRouter();
@@ -506,6 +509,25 @@ export default function Home() {
                </div>
             </footer>
          </div>
+      </section>
+
+      {/* 3D CYBER GAME SECTION */}
+      <section className="bg-[#020202] text-white pt-32 pb-40 px-6 border-t border-[#1a1a1a]">
+        <div className="max-w-7xl mx-auto flex flex-col gap-16">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pb-10 border-b border-white/20">
+            <div>
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#00ffcc] font-space mb-6">Simulation.exe</h2>
+              <h3 className="text-4xl md:text-6xl font-serif tracking-tighter leading-[1.1] text-white">System Breach<br/>Protocol</h3>
+            </div>
+            <div className="text-white/50 text-sm max-w-sm leading-[1.8] font-space text-[10px] uppercase tracking-widest">
+              Engage with the matrix. Complete isolation from reality. Avoid firewalls.
+            </div>
+          </div>
+          
+          <div className="w-full">
+            <CyberGame />
+          </div>
+        </div>
       </section>
 
       {/* READING MODAL */}
