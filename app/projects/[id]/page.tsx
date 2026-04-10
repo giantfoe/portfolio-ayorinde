@@ -31,10 +31,7 @@ export default async function ProjectPage(props: { params: Promise<{ id: string 
         {/* Top Navbar */}
         <nav className="flex items-center justify-between border-b border-white/20 px-4 py-4 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] bg-black z-20">
           <div className="flex gap-6 md:gap-10">
-            <Link href="/" className="hover:text-white/50 transition-colors">PROJECTS 作品</Link>
-            <div className="text-white/50 cursor-crosshair hover:text-white transition-colors">LOOKBOOK 軌跡</div>
-            <div className="text-white/50 cursor-crosshair hover:text-white transition-colors">BRAND 理念</div>
-            <div className="text-white/50 cursor-crosshair hover:text-white transition-colors flex items-center gap-1">CART 大車 <span className="text-[9px] font-normal">[0]</span></div>
+            <Link href="/" className="hover:text-white/50 transition-colors cursor-crosshair">PROJECTS 作品</Link>
           </div>
           <div className="cursor-crosshair hover:text-white/50 text-xl font-light leading-none">+</div>
         </nav>
