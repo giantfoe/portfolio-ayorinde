@@ -267,14 +267,16 @@ export default function Home() {
                 <p className="font-inter text-sm md:text-lg text-gray-400 max-w-sm lowercase italic">/ Capturing the textures, lights, and shadows that inspire our daily creative workflow.</p>
              </div>
 
-             <div className="mt-8 flex-1 w-full min-h-[600px] md:min-h-[800px] grid grid-cols-2 grid-rows-2 gap-4">
-                 {[1, 2, 3, 4].map(idx => (
-                    <div key={idx} className="bg-[#111] animate-pulse rounded-sm relative overflow-hidden group">
-                       <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <span className="font-space font-bold uppercase tracking-widest text-[10px] text-white/50">Fragment {idx}</span>
-                       </div>
-                    </div>
-                 ))}
+             <div className="mt-8 flex-1 w-full min-h-[600px] md:min-h-[800px] styled-juicer relative rounded-sm">
+                <iframe 
+                  src="https://www.juicer.io/api/feeds/ayorinde_john/iframe?per=10" 
+                  frameBorder="0" 
+                  width="100%" 
+                  height="100%" 
+                  className="w-full h-full min-h-[600px] md:min-h-[800px] border-none"
+                  title="Instagram Feed"
+                  scrolling="yes"
+                />
              </div>
           </div>
         </motion.div>
