@@ -183,7 +183,7 @@ export default async function ProjectPage(props: { params: Promise<{ id: string 
         {/* Buttons Action Group */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 p-6 md:p-8 border-b border-white/20 bg-black z-10 relative">
            
-           {/* Primary Button */}
+           {/* Primary Button: View Repository */}
            <a href={project.link} target="_blank" className="bg-black p-6 md:p-8 relative group hover:bg-[#1a1a1a] transition-all cursor-crosshair block overflow-hidden shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]">
               {/* Box Corner Brackets */}
               <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-top-left"></div>
@@ -193,29 +193,47 @@ export default async function ProjectPage(props: { params: Promise<{ id: string 
               
               <div className="flex justify-between items-end h-full mt-2 relative z-10">
                 <div className="pr-4">
-                  <div className="text-2xl md:text-3xl font-medium tracking-wider mb-2 font-sans leading-none">Add to cart</div>
-                  <div className="text-lg font-bold tracking-[0.2em] font-sans">起動する</div>
+                  <div className="text-2xl md:text-3xl font-medium tracking-wider mb-2 font-sans leading-none">View Repo</div>
+                  <div className="text-lg font-bold tracking-[0.2em] font-sans">コードを見る</div>
                 </div>
                 <div className="text-4xl font-light mb-1 opacity-50 group-hover:translate-x-3 group-hover:opacity-100 transition-all">→</div>
               </div>
            </a>
 
-           {/* Secondary Button */}
-           <Link href="/" className="bg-black p-6 md:p-8 relative group hover:bg-[#1a1a1a] transition-all cursor-crosshair block overflow-hidden shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]">
-              {/* Box Corner Brackets */}
-              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-top-left"></div>
-              <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-top-right"></div>
-              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-bottom-left"></div>
-              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-bottom-right"></div>
-              
-              <div className="flex justify-between items-end h-full mt-2 relative z-10">
-                <div className="pr-4">
-                  <div className="text-2xl md:text-3xl font-medium tracking-wider mb-2 font-sans leading-none">Pay later</div>
-                  <div className="text-lg font-bold tracking-[0.2em] font-sans">戻る</div>
+           {/* Secondary Button: Conditional Live Site or Return Home */}
+           {(project as any).liveLink ? (
+             <a href={(project as any).liveLink} target="_blank" className="bg-white text-black p-6 md:p-8 relative group hover:bg-[#e0e0e0] transition-all cursor-crosshair block overflow-hidden shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]">
+                {/* Box Corner Brackets */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black opacity-80 group-hover:scale-110 transition-transform origin-top-left"></div>
+                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black opacity-80 group-hover:scale-110 transition-transform origin-top-right"></div>
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black opacity-80 group-hover:scale-110 transition-transform origin-bottom-left"></div>
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black opacity-80 group-hover:scale-110 transition-transform origin-bottom-right"></div>
+                
+                <div className="flex justify-between items-end h-full mt-2 relative z-10">
+                  <div className="pr-4">
+                    <div className="text-2xl md:text-3xl font-medium tracking-wider mb-2 font-sans leading-none">View Live Site</div>
+                    <div className="text-lg font-bold tracking-[0.2em] font-sans">プレビュー</div>
+                  </div>
+                  <div className="text-4xl font-light mb-1 opacity-50 group-hover:translate-x-3 group-hover:opacity-100 transition-all">↗</div>
                 </div>
-                <div className="text-4xl font-light mb-1 opacity-50 group-hover:translate-x-3 group-hover:opacity-100 transition-all">→</div>
-              </div>
-           </Link>
+             </a>
+           ) : (
+             <Link href="/" className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 relative group hover:bg-[#1a1a1a] transition-all cursor-crosshair block overflow-hidden shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]">
+                {/* Box Corner Brackets */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white/30 group-hover:border-white opacity-80 group-hover:scale-110 transition-all origin-top-left"></div>
+                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-white/30 group-hover:border-white opacity-80 group-hover:scale-110 transition-all origin-top-right"></div>
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-white/30 group-hover:border-white opacity-80 group-hover:scale-110 transition-all origin-bottom-left"></div>
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white/30 group-hover:border-white opacity-80 group-hover:scale-110 transition-all origin-bottom-right"></div>
+                
+                <div className="flex justify-between items-end h-full mt-2 relative z-10 text-white/60 group-hover:text-white transition-colors">
+                  <div className="pr-4">
+                    <div className="text-2xl md:text-3xl font-medium tracking-wider mb-2 font-sans leading-none">Return Base</div>
+                    <div className="text-lg font-bold tracking-[0.2em] font-sans">スタジオに戻る</div>
+                  </div>
+                  <div className="text-4xl font-light mb-1 opacity-50 group-hover:-translate-x-3 group-hover:opacity-100 transition-all">←</div>
+                </div>
+             </Link>
+           )}
         </div>
 
         {/* Specifications Dropdown Row */}
