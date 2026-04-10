@@ -121,16 +121,6 @@ export default function HeroSection() {
         
         {/* MAIN TITLE - RESPONSIVE SIZES */}
         <div className="w-full relative flex flex-col items-start md:items-center text-left md:text-center mt-8 md:mt-0 mb-4 md:mb-0 z-40">
-          
-          {/* Small Top Text */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-[9px] md:text-xs font-outfit uppercase tracking-[0.4em] text-[#ff3d00] mb-4 md:mb-6 font-bold"
-          >
-            NO 2 SECTIONS ARE THE SAME
-          </motion.div>
 
           <motion.h1 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -163,6 +153,19 @@ export default function HeroSection() {
           transition={{ duration: 1.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="relative z-30 md:z-50 w-full max-w-[750px] md:max-w-[1120px] lg:max-w-[1310px] aspect-square flex items-center justify-center mt-[-20px] sm:mt-10 md:mt-[150px] lg:mt-[50px] xl:-mt-[490px] pointer-events-none"
         >
+          {/* Obscure Kicker Text Above Image Head */}
+          <motion.div 
+            initial={{ opacity: 0, rotate: -15, y: 20 }}
+            animate={{ opacity: 0.5, rotate: -5, y: 0 }}
+            transition={{ duration: 2, delay: 1 }}
+            className="absolute top-[8%] sm:top-[6%] md:top-[12%] right-[25%] sm:right-[35%] md:right-[40%] z-[60] flex flex-col items-start gap-0.5 text-[6px] sm:text-[8px] md:text-[10px] font-space uppercase tracking-[0.5em] text-[#1a1a1a] opacity-50 mix-blend-multiply"
+          >
+            <span className="ml-8 text-[#ff3d00]">[NO]</span>
+            <span className="ml-2">2 SECTIONS</span>
+            <span className="ml-6">—ARE</span>
+            <span className="ml-0">THE SAME.</span>
+          </motion.div>
+
           <motion.div className="relative w-full h-full transform scale-[1.2] md:scale-100 origin-top" style={{ y: yParallax }}>
             <Image 
               src="/images/MYHOMEPAGE.webp" 
