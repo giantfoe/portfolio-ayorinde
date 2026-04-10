@@ -300,24 +300,6 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-black/5 border border-black/5">
                {[
                  { 
-                   name: "ptflio", 
-                   desc: "A modern developer portfolio and engineering showcase site.",
-                   lang: "TypeScript",
-                   stars: "1",
-                   forks: "0",
-                   tag: "Portfolio",
-                   url: "https://github.com/giantfoe/ptflio"
-                 },
-                 { 
-                   name: "Marketplace-Infra-for-SL", 
-                   desc: "Art marketplace application built with Next.js, Convex, and Clerk.",
-                   lang: "TypeScript",
-                   stars: "0",
-                   forks: "0",
-                   tag: "Web App",
-                   url: "https://github.com/giantfoe/Marketplace-Infra-for-SL"
-                 },
-                 { 
                    name: "farm-connect", 
                    desc: "A digital agricultural networking platform and supply chain solution.",
                    lang: "TypeScript",
@@ -325,15 +307,6 @@ export default function Home() {
                    forks: "0",
                    tag: "App",
                    url: "https://github.com/giantfoe/farm-connect"
-                 },
-                 { 
-                   name: "freewrite", 
-                   desc: "A free writing app for mac designed to eliminate distraction.",
-                   lang: "App",
-                   stars: "0",
-                   forks: "0",
-                   tag: "Desktop",
-                   url: "https://github.com/giantfoe/freewrite"
                  },
                  { 
                    name: "NKVault", 
@@ -345,13 +318,49 @@ export default function Home() {
                    url: "https://github.com/giantfoe/NKVault"
                  },
                  { 
-                   name: "claude-code", 
-                   desc: "Claude Code Snapshot for Research. All original source code is the property of Anthropic.",
+                   name: "Marketplace-Infra-for-SL", 
+                   desc: "Art marketplace application built with Next.js, Convex, and Clerk.",
                    lang: "TypeScript",
                    stars: "0",
                    forks: "0",
-                   tag: "Research",
-                   url: "https://github.com/giantfoe/claude-code"
+                   tag: "Web App",
+                   url: "https://github.com/giantfoe/Marketplace-Infra-for-SL"
+                 },
+                 { 
+                   name: "ecommerce-infra", 
+                   desc: "High-performance ecommerce infrastructure scaling modern digital storefronts.",
+                   lang: "TypeScript",
+                   stars: "0",
+                   forks: "0",
+                   tag: "Infrastructure",
+                   url: "https://github.com/giantfoe/ecommerce-infra"
+                 },
+                 { 
+                   name: "nft-marketplace-ai", 
+                   desc: "NFT Marketplace with AI Image Gen — Solana blockchain integration with Freepik API for seamless NFT creation.",
+                   lang: "Rust",
+                   stars: "0",
+                   forks: "0",
+                   tag: "Web3/AI",
+                   url: "https://github.com/giantfoe/nft-marketplace-ai"
+                 },
+                 { 
+                   name: "edutrack_sierra_leone_mvp", 
+                   desc: "An AI-enabled learning platform for adult learners and school-going youth in Sierra Leone.",
+                   lang: "TypeScript",
+                   stars: "0",
+                   forks: "0",
+                   tag: "EdTech",
+                   url: "https://github.com/giantfoe/edutrack_sierra_leone_mvp"
+                 },
+                 { 
+                   name: "bai-bureh-experience", 
+                   desc: "Interactive historical experience about Bai Bureh's resistance against British colonial rule.",
+                   lang: "TypeScript",
+                   stars: "0",
+                   forks: "0",
+                   tag: "Interactive",
+                   url: "https://github.com/giantfoe/bai-bureh-experience"
                  }
                ].map((repo, i) => (
                  <motion.div 
