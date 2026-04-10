@@ -156,9 +156,9 @@ export default function HeroSection() {
           {/* Obscure Kicker Text Above Image Head */}
           <motion.div 
             initial={{ opacity: 0, rotate: -15, y: 20 }}
-            animate={{ opacity: 0.5, rotate: -5, y: 0 }}
-            transition={{ duration: 2, delay: 1 }}
-            className="absolute top-[8%] sm:top-[6%] md:top-[12%] right-[25%] sm:right-[35%] md:right-[40%] z-[60] flex flex-col items-start gap-0.5 text-[6px] sm:text-[8px] md:text-[10px] font-space uppercase tracking-[0.5em] text-[#1a1a1a] opacity-50 mix-blend-multiply"
+            animate={{ opacity: 1, rotate: -5, y: 0 }}
+            transition={{ duration: 1.5, delay: 0.8 }}
+            className="absolute top-[6%] sm:top-[4%] md:top-[10%] right-[15%] sm:right-[25%] md:right-[35%] z-[60] flex flex-col items-start gap-1 text-[10px] sm:text-[12px] md:text-[14px] font-space font-bold uppercase tracking-[0.3em] text-[#1a1a1a] drop-shadow-sm"
           >
             <span className="ml-8 text-[#ff3d00]">[NO]</span>
             <span className="ml-2">2 SECTIONS</span>
