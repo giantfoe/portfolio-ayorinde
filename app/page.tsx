@@ -95,7 +95,7 @@ export default function Home() {
       <HeroSection />
 
       {/* WORKS SECTION */}
-      <section id="works" className="bg-white text-black pt-0 pb-32 px-6 overflow-hidden border-t border-black/5">
+      <section id="works" className="relative z-[60] bg-white text-black pt-0 pb-32 px-6 overflow-hidden border-t border-black/5">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-24 gap-8">
             <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-[10vw] font-space font-bold uppercase leading-[0.8]">The<br/>Works</h2>

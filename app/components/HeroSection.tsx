@@ -117,19 +117,32 @@ export default function HeroSection() {
       </nav>
 
       {/* HERO CONTENT */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-6 md:px-16 pt-32 pb-0 z-10 w-full max-w-[1440px] mx-auto">
+      <div className="relative flex-1 flex flex-col md:items-center justify-start md:justify-center px-6 md:px-16 pt-32 md:pt-32 pb-0 z-10 w-full max-w-[1440px] mx-auto overflow-visible">
         
         {/* MAIN TITLE - RESPONSIVE SIZES */}
-        <div className="w-full relative flex flex-col items-center text-center mb-12 md:mb-0">
+        <div className="w-full relative flex flex-col items-start md:items-center text-left md:text-center mt-8 md:mt-0 mb-4 md:mb-0 z-40">
           <motion.h1 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-5xl sm:text-7xl md:text-8xl lg:text-[10vw] font-space font-black uppercase leading-[0.85] tracking-tight text-[#1a1a1a] z-20"
+            className="text-[17vw] sm:text-[15vw] md:text-8xl lg:text-[12vw] xl:text-[10vw] font-space font-black uppercase leading-[0.85] tracking-tight text-[#1a1a1a]"
           >
-            <DecryptText text="Design The" delay={0.2} /><br/>
-            <span className="text-[#ff3d00]"><DecryptText text="Future" delay={0.6} /></span>
+            <span className="block md:inline"><DecryptText text="Design" delay={0.2} /></span>
+            <span className="hidden md:inline">{" "}</span>
+            <span className="block md:inline mt-2 md:mt-0"><DecryptText text="The" delay={0.4} /></span>
+            <span className="hidden md:inline"><br/></span>
+            <span className="block md:inline mt-2 md:mt-0 text-[#ff3d00]"><DecryptText text="Future" delay={0.6} /></span>
           </motion.h1>
+          
+          {/* Mobile Description */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1 }}
+            className="mt-8 md:hidden text-xs sm:text-sm max-w-[240px] sm:max-w-[280px] font-inter text-gray-500 lowercase italic leading-relaxed z-40"
+          >
+            / Building digital architecture, motion, and brand systems for the modern web edge.
+          </motion.p>
         </div>
 
         {/* Central Artwork */}
@@ -137,9 +150,9 @@ export default function HeroSection() {
           initial={{ opacity: 0, scale: 0.95, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 1.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-30 w-full max-w-[750px] md:max-w-[1120px] lg:max-w-[1310px] aspect-square flex items-center justify-center -mt-[160px] md:-mt-[360px] lg:-mt-[490px] pointer-events-none"
+          className="relative z-30 md:z-50 w-full max-w-[750px] md:max-w-[1120px] lg:max-w-[1310px] aspect-square flex items-center justify-center mt-[-20px] sm:mt-10 md:mt-[150px] lg:mt-[50px] xl:-mt-[490px] pointer-events-none"
         >
-          <motion.div className="relative w-full h-full" style={{ y: yParallax }}>
+          <motion.div className="relative w-full h-full transform scale-[1.2] md:scale-100 origin-top" style={{ y: yParallax }}>
             <Image 
               src="/images/MYHOMEPAGE.webp" 
               alt="Hero Section Avatar" 
@@ -151,13 +164,11 @@ export default function HeroSection() {
 
         </motion.div>
 
-
-
       </div>
 
       {/* Decorative lines/elements */}
-      <div className="absolute top-1/2 left-0 w-full h-[1px] bg-black/[0.03] -translate-y-1/2 z-0 hidden md:block" />
-      <div className="absolute top-0 left-1/2 w-[1px] h-full bg-black/[0.03] -translate-x-1/2 z-0 hidden md:block" />
+      <div className="absolute top-1/2 left-0 w-full h-[1px] bg-black/[0.03] -translate-y-1/2 z-0 hidden lg:block" />
+      <div className="absolute top-0 left-1/2 w-[1px] h-full bg-black/[0.03] -translate-x-1/2 z-0 hidden lg:block" />
 
     </section>
   );
