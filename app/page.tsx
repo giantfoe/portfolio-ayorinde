@@ -5,10 +5,14 @@ import { motion } from 'framer-motion';
 import HeroSection from './components/HeroSection';
 import { projects } from './data/projects';
 import { useRouter } from 'next/navigation';
-import Script from 'next/script';
+import Image from 'next/image';
+
 export default function Home() {
+  const router = useRouter();
+
   const maskRef = useRef<HTMLDivElement>(null);
   const [hasMoved, setHasMoved] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [activePanel, setActivePanel] = useState<'light' | 'dark' | 'none'>('none');
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [readingArticle, setReadingArticle] = useState<any>(null);
@@ -44,8 +48,6 @@ export default function Home() {
       date: "Jul 12, 2024"
     }
   ]);
-  const router = useRouter();
-  
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!hasMoved) setHasMoved(true);
@@ -55,7 +57,16 @@ export default function Home() {
     };
     
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    
+    // Check mobile dimension safely
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', checkMobile);
+    };
   }, [hasMoved]);
 
   useEffect(() => {
@@ -80,7 +91,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[var(--bg-base)] text-[var(--foreground)] overflow-x-hidden relative">
+    <main id="main-content" className="min-h-screen bg-[var(--bg-base)] text-[var(--foreground)] overflow-x-hidden relative">
       <HeroSection />
 
       {/* WORKS SECTION */}
@@ -104,7 +115,7 @@ export default function Home() {
               >
                 {/* Background Image & Gradient Overlays */}
                 <div className="absolute inset-0 bg-[#1a1a1a]">
-                  <img src={project.img} alt={project.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-110 transition-all duration-1000 ease-[0.16,1,0.3,1]" />
+                  <Image src={project.img} alt={project.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover opacity-60 group-hover:opacity-90 group-hover:scale-110 transition-all duration-1000 ease-[0.16,1,0.3,1]" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                 </div>
 
@@ -143,7 +154,7 @@ export default function Home() {
         <div className="w-full max-w-[1440px] mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 gap-8">
              <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-[10vw] font-serif uppercase leading-[0.8] tracking-tighter">Areas of<br/>Practice</h2>
-             <p className="font-outfit text-[10px] font-bold uppercase tracking-[0.4em] text-black/50 max-w-sm">/ Core disciplines and technical domains of expertise.</p>
+             <p className="font-outfit text-[10px] font-bold uppercase tracking-[0.4em] text-black/60 max-w-sm">/ Core disciplines and technical domains of expertise.</p>
           </div>
           
           <div className="flex flex-col border-t border-black">
@@ -173,8 +184,8 @@ export default function Home() {
         <motion.div 
           initial={false}
           animate={{ 
-            width: typeof window !== 'undefined' && window.innerWidth < 1024 ? '100%' : (activePanel === 'light' ? '85%' : activePanel === 'none' ? '50%' : '15%'),
-            height: typeof window !== 'undefined' && window.innerWidth < 1024 ? (activePanel === 'light' ? '80vh' : activePanel === 'none' ? '50vh' : '10vh') : 'auto'
+            width: isMobile ? '100%' : (activePanel === 'light' ? '85%' : activePanel === 'none' ? '50%' : '15%'),
+            height: isMobile ? (activePanel === 'light' ? '80vh' : activePanel === 'none' ? '50vh' : '10vh') : 'auto'
           }}
           onMouseEnter={() => setActivePanel('light')}
           onMouseLeave={() => { setActivePanel('none'); setPlayingVideo(null); }}
@@ -193,10 +204,10 @@ export default function Home() {
 
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 overflow-hidden z-10 relative">
                 {[
-                  { id: "GUrQsgmBz30", title: "Cinematic Visual 01", fallbackImg: "/images/ig_post_1.jpg" },
-                  { id: "QpN804ooQeI", title: "Visual Essay 02", fallbackImg: "/images/ig_post_2.jpg" },
-                  { id: "AzToLJ7FIOg", title: "Motion Archive 03", fallbackImg: "/images/ig_post_3.jpg" },
-                  { id: "P-RATvT-2OM", title: "Editorial Cut 04", fallbackImg: "/images/ig_post_4.jpg" }
+                  { id: "GUrQsgmBz30", title: "Cinematic Visual 01", fallbackImg: "/images/ig_post_1.jpg", alt: "Cinematic visual exploration combining motion design and technical concepts" },
+                  { id: "QpN804ooQeI", title: "Visual Essay 02", fallbackImg: "/images/ig_post_2.jpg", alt: "A visual essay exploring editorial aesthetics" },
+                  { id: "AzToLJ7FIOg", title: "Motion Archive 03", fallbackImg: "/images/ig_post_3.jpg", alt: "Archived motion design experiments" },
+                  { id: "P-RATvT-2OM", title: "Editorial Cut 04", fallbackImg: "/images/ig_post_4.jpg", alt: "Editorial video cut highlighting design workflows" }
                 ].map((vid, i) => (
                   <div key={i} className="group/vid relative aspect-video bg-gray-200 overflow-hidden block">
                     {playingVideo === vid.id ? (
@@ -210,21 +221,23 @@ export default function Home() {
                          className="absolute inset-0 z-20"
                        ></iframe>
                     ) : (
-                       <div onClick={() => setPlayingVideo(vid.id)} className="w-full h-full cursor-pointer relative z-10">
-                         <img 
-                           src={`https://img.youtube.com/vi/${vid.id}/maxresdefault.jpg`} 
-                           alt={vid.title} 
-                           className="w-full h-full object-cover transition-transform duration-700 group-hover/vid:scale-105" 
-                           onError={(e) => { e.currentTarget.src = vid.fallbackImg; }}
+                       <button onClick={() => setPlayingVideo(vid.id)} className="w-full h-full cursor-pointer relative z-10 block" aria-label={`Play video: ${vid.title}`}>
+                         <Image 
+                           src={`https://img.youtube.com/vi/${vid.id}/hqdefault.jpg`} 
+                           alt={vid.alt} 
+                           fill
+                           sizes="(max-width: 768px) 100vw, 50vw"
+                           className="object-cover transition-transform duration-700 group-hover/vid:scale-105" 
+                           // Fallback logic not easily supported by fill+Image without custom loader
                          />
-                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/vid:opacity-100 transition-opacity">
+                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/vid:opacity-100 transition-opacity" aria-hidden="true">
                             <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-white flex items-center justify-center text-white backdrop-blur-sm">▶</div>
                          </div>
-                         <div className="absolute bottom-3 left-3 right-3 text-white">
+                         <div className="absolute bottom-3 left-3 right-3 text-white text-left">
                             <div className="text-[7px] md:text-[8px] font-bold uppercase tracking-widest bg-black/50 inline-block px-2 py-1 mb-1">Play Inline</div>
-                            <h4 className="text-[10px] md:text-sm font-space font-bold uppercase">{vid.title}</h4>
+                            <h3 className="text-[10px] md:text-sm font-space font-bold uppercase">{vid.title}</h3>
                          </div>
-                       </div>
+                       </button>
                     )}
                   </div>
                 ))}
@@ -236,8 +249,8 @@ export default function Home() {
         <motion.div 
           initial={false}
           animate={{ 
-            width: typeof window !== 'undefined' && window.innerWidth < 1024 ? '100%' : (activePanel === 'dark' ? '85%' : activePanel === 'none' ? '50%' : '15%'),
-            height: typeof window !== 'undefined' && window.innerWidth < 1024 ? (activePanel === 'dark' ? '80vh' : activePanel === 'none' ? '50vh' : '10vh') : 'auto'
+            width: isMobile ? '100%' : (activePanel === 'dark' ? '85%' : activePanel === 'none' ? '50%' : '15%'),
+            height: isMobile ? (activePanel === 'dark' ? '80vh' : activePanel === 'none' ? '50vh' : '10vh') : 'auto'
           }}
           onMouseEnter={() => setActivePanel('dark')}
           onMouseLeave={() => setActivePanel('none')}
@@ -254,16 +267,14 @@ export default function Home() {
                 <p className="font-inter text-sm md:text-lg text-gray-400 max-w-sm lowercase italic">/ Capturing the textures, lights, and shadows that inspire our daily creative workflow.</p>
              </div>
 
-             <div className="mt-8 flex-1 w-full min-h-[600px] md:min-h-[800px] styled-juicer relative rounded-sm">
-                <iframe 
-                  src="https://www.juicer.io/api/feeds/ayorinde_john/iframe?per=10" 
-                  frameBorder="0" 
-                  width="100%" 
-                  height="100%" 
-                  className="w-full h-full min-h-[600px] md:min-h-[800px] border-none"
-                  title="Instagram Feed"
-                  scrolling="yes"
-                />
+             <div className="mt-8 flex-1 w-full min-h-[600px] md:min-h-[800px] grid grid-cols-2 grid-rows-2 gap-4">
+                 {[1, 2, 3, 4].map(idx => (
+                    <div key={idx} className="bg-[#111] animate-pulse rounded-sm relative overflow-hidden group">
+                       <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="font-space font-bold uppercase tracking-widest text-[10px] text-white/50">Fragment {idx}</span>
+                       </div>
+                    </div>
+                 ))}
              </div>
           </div>
         </motion.div>
@@ -279,7 +290,7 @@ export default function Home() {
                   <p className="font-inter text-sm md:text-lg text-gray-600 mb-8 lowercase italic">/ Core infrastructure, open-source architectures, and digital public goods built for the scalable web.</p>
                   <a href="https://github.com/giantfoe" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-4 bg-black text-white px-8 py-4 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-[var(--accent)] transition-all">
                     <span>Follow GitHub</span>
-                    <span className="text-lg">↗</span>
+                    <span className="text-lg" aria-hidden="true">↗</span>
                   </a>
                </div>
             </div>
@@ -352,7 +363,7 @@ export default function Home() {
                           <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
                        </div>
                        <h3 className="text-2xl md:text-3xl lg:text-4xl font-space font-black uppercase mb-4 group-hover:text-[var(--accent)] transition-colors">{repo.name}</h3>
-                       <p className="font-inter text-xs md:text-sm text-gray-500 leading-relaxed mb-8">
+                       <p className="font-inter text-xs md:text-sm text-gray-600 leading-relaxed mb-8">
                          {repo.desc}
                        </p>
                     </div>
@@ -361,11 +372,11 @@ export default function Home() {
                        <div className="flex justify-between items-center text-[10px] uppercase font-bold font-space tracking-widest text-[#1a1a1a]">
                           <div className="flex gap-4">
                              <div className="flex items-center gap-2">
-                                <span className="text-gray-400">Stars</span>
+                                <span className="text-gray-500">Stars</span>
                                 <span>{repo.stars}</span>
                              </div>
                              <div className="flex items-center gap-2">
-                                <span className="text-gray-400">Forks</span>
+                                <span className="text-gray-500">Forks</span>
                                 <span>{repo.forks}</span>
                              </div>
                           </div>
@@ -374,7 +385,7 @@ export default function Home() {
                        <div className="h-[1px] w-full bg-black/5"></div>
                        <a href={repo.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[10px] md:text-xs font-bold uppercase tracking-widest group-hover:gap-5 transition-all">
                           <span>Explore Repository</span>
-                          <span>→</span>
+                          <span aria-hidden="true">→</span>
                        </a>
                     </div>
                  </motion.div>
@@ -448,23 +459,29 @@ export default function Home() {
                </h2>
                <div className="max-w-md w-full">
                   <p className="font-inter text-lg text-gray-400 mb-12 lowercase italic">/ Let's build something for the digital vanguard.</p>
-                  <a href="https://wa.me/23279763339" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 border-b border-white/30 px-0 py-4 w-full text-xl font-space uppercase text-white hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors group">
-                     <span>Start a project via WhatsApp</span>
-                     <span className="text-[var(--accent)] text-4xl group-hover:translate-x-2 transition-transform">→</span>
-                  </a>
+                  <div className="flex flex-col gap-4">
+                    <a href="https://wa.me/23279763339" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 border-b border-white/30 px-0 py-4 w-full text-xl font-space uppercase text-white hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors group">
+                       <span>Start a project via WhatsApp</span>
+                       <span className="text-[var(--accent)] text-4xl group-hover:translate-x-2 transition-transform" aria-hidden="true">→</span>
+                    </a>
+                    <a href="mailto:ayorinde270@gmail.com" className="flex items-center gap-4 border-b border-white/30 px-0 py-4 w-full text-xl font-space uppercase text-white hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors group">
+                       <span>Email For Inquiries</span>
+                       <span className="text-[var(--accent)] text-4xl group-hover:translate-x-2 transition-transform" aria-hidden="true">→</span>
+                    </a>
+                  </div>
                </div>
             </div>
             
             <footer className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-24 border-t border-white/10 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">
                <div className="flex flex-col gap-4">
-                  <div className="text-white mb-2">Ayorinde © 2026</div>
+                  <div className="text-white mb-2">Ayorinde © {new Date().getFullYear()}</div>
                   <div>All rights reserved.</div>
                </div>
                <div className="flex flex-col gap-4">
                   <div className="text-white mb-2">Social</div>
-                  <a href="#" className="hover:text-white">Instagram</a>
-                  <a href="#" className="hover:text-white">Twitter</a>
-                  <a href="#" className="hover:text-white">LinkedIn</a>
+                  <a href="https://www.instagram.com/ayorinde270" target="_blank" rel="noopener noreferrer" className="hover:text-white">Instagram</a>
+                  <a href="https://twitter.com/ayorinde270" target="_blank" rel="noopener noreferrer" className="hover:text-white">Twitter</a>
+                  <a href="https://www.linkedin.com/in/ayorinde270" target="_blank" rel="noopener noreferrer" className="hover:text-white">LinkedIn</a>
                </div>
                <div className="flex flex-col gap-4">
                   <div className="text-white mb-2">Contact</div>
