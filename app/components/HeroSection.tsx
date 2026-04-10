@@ -141,7 +141,7 @@ export default function HeroSection() {
         >
           <motion.div className="relative w-full h-full" style={{ y: yParallax }}>
             <Image 
-              src="/images/HERO SECTION ME.svg" 
+              src="/images/MYHOMEPAGE.webp" 
               alt="Hero Section Avatar" 
               fill 
               className="object-contain drop-shadow-2xl"
