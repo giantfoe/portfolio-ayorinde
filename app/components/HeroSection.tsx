@@ -121,6 +121,17 @@ export default function HeroSection() {
         
         {/* MAIN TITLE - RESPONSIVE SIZES */}
         <div className="w-full relative flex flex-col items-start md:items-center text-left md:text-center mt-8 md:mt-0 mb-4 md:mb-0 z-40">
+          
+          {/* Small Top Text */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-[9px] md:text-xs font-outfit uppercase tracking-[0.4em] text-[#ff3d00] mb-4 md:mb-6 font-bold"
+          >
+            NO 2 SECTIONS ARE THE SAME
+          </motion.div>
+
           <motion.h1 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
