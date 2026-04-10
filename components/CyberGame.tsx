@@ -52,10 +52,14 @@ export default function CyberGame() {
     };
 
     const triggerGameOver = () => {
-      if (isGameOver) return; // Prevent double trigger
-      isGameOver = true;
-      setGameOver(true);
+      if (isGameOver) return;
       setHighScore(prev => Math.max(prev, currentScore));
+      
+      // Flash the screen red briefly by drawing a full red rect to signify a hit
+      ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      resetGame(); // Instantly reset and keep playing seamlessly
     };
 
     const update = () => {
@@ -178,7 +182,7 @@ export default function CyberGame() {
 
     const handleInput = (e: Event) => {
       e.preventDefault();
-      if (!gameStarted || isGameOver) {
+      if (!gameStarted) {
         resetGame();
       } else {
         bird.velocity = bird.jump;
@@ -213,7 +217,7 @@ export default function CyberGame() {
       {/* HUD Info */}
       <div className="absolute top-6 left-6 z-10 text-[10px] uppercase tracking-widest text-white opacity-80 pointer-events-none transition-opacity">
         <div className="font-bold">FLIGHT.SIMULATOR // [EXECUTE]</div>
-        <div className="text-white/40 mt-1 uppercase tracking-[0.3em]">SYS.STATUS: {gameOver ? 'CRITICAL FAILURE' : 'ONLINE'}</div>
+        <div className="text-white/40 mt-1 uppercase tracking-[0.3em]">SYS.STATUS: ONLINE</div>
         <div className="text-[#00ffcc] mt-4 font-bold text-4xl">{score}</div>
       </div>
       
@@ -224,13 +228,13 @@ export default function CyberGame() {
       </div>
 
       {/* Start / Reboot Screen */}
-      {(!gameStarted || gameOver) && (
+      {!gameStarted && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none bg-black/40 backdrop-blur-[2px]">
           <h2 className="text-4xl text-white font-bold tracking-widest mb-4">
-            {gameOver ? "SYSTEM CRASH" : "SYSTEM READY"}
+            SYSTEM READY
           </h2>
           <p className="text-[#00ffcc] text-xs md:text-sm tracking-[0.3em] animate-pulse font-bold bg-black/50 px-4 py-2 border border-[#00ffcc]">
-            CLICK OR PRESS SPACE TO {gameOver ? "REBOOT" : "INITIATE"}
+            CLICK OR PRESS SPACE TO INITIATE
           </p>
         </div>
       )}
