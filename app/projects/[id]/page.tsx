@@ -98,7 +98,7 @@ export default async function ProjectPage(props: { params: Promise<{ id: string 
 
            {/* Micro Data Columns */}
            <div className="grid grid-cols-4 md:grid-cols-6 border-t border-b border-white/20 text-[8px] md:text-[10px] tracking-[0.2em] divide-x divide-white/20 text-center uppercase py-2 opacity-80 tech-font">
-              <div>IP . {project.lang || 'TS'}</div>
+              <div>IP . {(project as any).lang || 'TS'}</div>
               <div className="hidden md:block">AKIS</div>
               <div>{project.category}</div>
               <div>CHAPTER 1</div>
