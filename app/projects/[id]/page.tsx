@@ -17,191 +17,236 @@ export default async function ProjectPage(props: { params: Promise<{ id: string 
     notFound();
   }
 
+  // Use a generated fake ID based on the project ID string
+  const hash = Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
   return (
-    <main className="min-h-screen bg-[#050505] text-[#00ffcc] overflow-x-hidden font-mono selection:bg-[#00ffcc] selection:text-black relative">
-      {/* CRT / Scanline Overlay */}
-      <div className="pointer-events-none fixed inset-0 z-[100] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.15)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%] opacity-40 mix-blend-overlay"></div>
+    <main className="min-h-screen bg-[#050505] text-[#ffffff] font-sans selection:bg-white selection:text-black overflow-x-hidden relative">
       
-      {/* Subtle Glows */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00ffcc] rounded-full blur-[200px] opacity-[0.07] pointer-events-none"></div>
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#00ffcc] rounded-full blur-[200px] opacity-[0.04] pointer-events-none"></div>
+      {/* Background Global Grid */}
+      <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[length:40px_40px] pointer-events-none"></div>
 
-      {/* Top Navigation / Status HUD */}
-      <nav className="relative z-50 w-full flex justify-between items-end px-6 md:px-10 py-6 border-b border-[#00ffcc]/20 bg-black/60 backdrop-blur-md">
-        <div>
-          <div className="text-[10px] tracking-[0.3em] opacity-60 mb-1">SYS.OP.AUTH // {id.toUpperCase()}</div>
-          <Link href="/" className="text-xl md:text-2xl font-space font-bold tracking-widest uppercase text-white hover:text-[#00ffcc] transition-colors flex items-center gap-3">
-            <span className="w-2 h-2 bg-[#00ffcc] animate-pulse rounded-sm"></span>
-            SYS.MAINFRAME_RTN
-          </Link>
-        </div>
-        <div className="hidden md:flex gap-8 text-[10px] tracking-[0.2em] font-bold opacity-60 uppercase text-right">
-          <div className="flex items-center gap-2">
-             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-             ENG: ONLINE
-          </div>
-          <div>SEC: INTACT</div>
-          <div className="text-[#00ffcc]">HASH: {project.id.toUpperCase().substring(0, 8)}...</div>
-        </div>
-      </nav>
-
-      {/* Main HUD Dashboard */}
-      <div className="relative z-40 p-4 md:p-8 w-full max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[calc(100vh-100px)]">
+      <div className="relative z-10 max-w-[1200px] mx-auto border-l border-r border-[#333] shadow-[0_0_150px_rgba(0,0,0,1)] bg-black min-h-screen flex flex-col">
         
-        {/* Left Diagnostics Panel */}
-        <div className="lg:col-span-3 flex flex-col gap-6 order-2 lg:order-1 h-full">
-          {/* Data Module 1 */}
-          <div className="border border-[#00ffcc]/30 bg-black/40 p-6 backdrop-blur-sm relative group hover:border-[#00ffcc]/60 transition-colors">
-            {/* Corners */}
-            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#00ffcc]"></div>
-            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#00ffcc]"></div>
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[#00ffcc]"></div>
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#00ffcc]"></div>
-            
-            <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 mb-6 flex justify-between border-b border-[#00ffcc]/20 pb-2">
-              <span>Project Class</span>
-              <span className="text-[#00ffcc]">[ {project.category} ]</span>
-            </h3>
-            
-            <div className="space-y-4 text-[10px] md:text-xs tracking-widest uppercase font-space">
-              <div className="flex justify-between items-center opacity-80 hover:opacity-100 transition-opacity cursor-default">
-                <span>Core Status</span>
-                <span className="text-[#00ffcc] animate-pulse bg-[#00ffcc]/10 px-2 py-0.5 border border-[#00ffcc]/30 rounded-sm">Deployed</span>
-              </div>
-              <div className="flex justify-between items-center opacity-80 hover:opacity-100 transition-opacity cursor-default">
-                <span>Security</span>
-                <span>Override</span>
-              </div>
-              <div className="flex justify-between items-center opacity-80 hover:opacity-100 transition-opacity cursor-default">
-                <span>Architecture</span>
-                <span>Scaled</span>
-              </div>
-            </div>
+        {/* Top Navbar */}
+        <nav className="flex items-center justify-between border-b border-white/20 px-4 py-4 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] bg-black z-20">
+          <div className="flex gap-6 md:gap-10">
+            <Link href="/" className="hover:text-white/50 transition-colors">PROJECTS 作品</Link>
+            <div className="text-white/50 cursor-crosshair hover:text-white transition-colors">LOOKBOOK 軌跡</div>
+            <div className="text-white/50 cursor-crosshair hover:text-white transition-colors">BRAND 理念</div>
+            <div className="text-white/50 cursor-crosshair hover:text-white transition-colors flex items-center gap-1">CART 大車 <span className="text-[9px] font-normal">[0]</span></div>
           </div>
+          <div className="cursor-crosshair hover:text-white/50 text-xl font-light leading-none">+</div>
+        </nav>
 
-          {/* Terminal / Live Feed Block */}
-          <div className="border border-[#00ffcc]/20 bg-black/60 p-6 backdrop-blur-md flex-1 relative font-mono text-[10px] leading-relaxed overflow-hidden">
-            <div className="opacity-50 text-[#00ffcc] mb-2 uppercase tracking-widest">{'>'} Boot sequence initiated...</div>
-            <div className="opacity-50 text-[#00ffcc] mb-2 uppercase tracking-widest">{'>'} Bypassing mainframes...</div>
-            <div className="opacity-50 text-[#00ffcc] mb-2 uppercase tracking-widest">{'>'} Loading asset matrices...</div>
-            <div className="opacity-50 text-[#00ffcc] mb-6 uppercase tracking-widest">{'>'} System protocols verified.</div>
-            
-            <div className="border-l-2 border-[#00ffcc]/50 pl-4 py-2 mt-6">
-              <div className="text-[9px] uppercase tracking-[0.2em] mb-2 text-white/40">Target Entity:</div>
-              <div className="opacity-90 text-white uppercase text-sm font-space tracking-widest font-black break-words">
-                {project.title.split('').join(' ')}
-              </div>
-            </div>
+        {/* Giant Image Box with Background X */}
+        <div className="w-full relative min-h-[45vh] md:min-h-[65vh] border-b border-white/20 bg-[#0a0a0a] flex items-center justify-center p-8 md:p-16 overflow-hidden z-10 group">
+           {/* Corner Squares */}
+           <div className="absolute top-[-3px] left-[-3px] w-1.5 h-1.5 bg-white z-20"></div>
+           <div className="absolute top-[-3px] right-[-3px] w-1.5 h-1.5 bg-white z-20"></div>
+           <div className="absolute bottom-[-3px] left-[-3px] w-1.5 h-1.5 bg-white z-20"></div>
+           <div className="absolute bottom-[-3px] right-[-3px] w-1.5 h-1.5 bg-white z-20"></div>
 
-            {/* Fake terminal graph/wave */}
-            <div className="mt-8 opacity-30 flex items-end gap-1 h-12">
-               {[...Array(15)].map((_, i) => (
-                 <div key={i} className="flex-1 bg-[#00ffcc]" style={{ height: `${Math.max(20, Math.random() * 100)}%`, opacity: Math.random() }}></div>
-               ))}
-            </div>
-          </div>
+           {/* Giant X background */}
+           <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20 z-0" preserveAspectRatio="none">
+             <line x1="0" y1="0" x2="100%" y2="100%" stroke="#ffffff" strokeWidth="1" />
+             <line x1="100%" y1="0" x2="0" y2="100%" stroke="#ffffff" strokeWidth="1" />
+           </svg>
+
+           {/* Central Image */}
+           <div className="relative z-10 w-full h-full max-w-[80%] aspect-video bg-[#050505] border border-white/10 flex items-center justify-center shadow-2xl transition-transform duration-1000 group-hover:scale-[1.02]">
+             <Image 
+                src={project.img} 
+                alt={project.title} 
+                fill 
+                className="object-cover filter grayscale contrast-[1.1] hover:grayscale-0 transition-all duration-[2000ms] p-2" 
+             />
+           </div>
+
+           {/* Left/Right Arrows */}
+           <Link href="/" className="absolute left-0 top-1/2 -translate-y-1/2 w-16 h-16 bg-white flex items-center justify-center cursor-crosshair hover:bg-[#e0e0e0] transition-colors z-30 shadow-lg">
+             <span className="text-black text-4xl pixel-font leading-none -mt-1">←</span>
+           </Link>
+           <Link href="/" className="absolute right-0 top-1/2 -translate-y-1/2 w-16 h-16 bg-white flex items-center justify-center cursor-crosshair hover:bg-[#e0e0e0] transition-colors z-30 shadow-lg">
+             <span className="text-black text-4xl pixel-font leading-none -mt-1">→</span>
+           </Link>
         </div>
 
-        {/* Center Imaging / Hologram Setup */}
-        <div className="lg:col-span-6 flex flex-col order-1 lg:order-2 lg:h-[calc(100vh-140px)] min-h-[50vh] relative">
-           {/* Crosshairs & Grid Background */}
-           <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,204,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,204,0.05)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-10"></div>
-           <div className="absolute top-1/2 left-0 w-full h-[1px] bg-[#00ffcc]/20 pointer-events-none z-20"></div>
-           <div className="absolute top-0 left-1/2 w-[1px] h-full bg-[#00ffcc]/20 pointer-events-none z-20"></div>
-           
-           {/* Center Lock Reticle */}
-           <div className="absolute top-1/2 left-1/2 w-24 h-24 -translate-x-1/2 -translate-y-1/2 border border-[#00ffcc]/40 rounded-full pointer-events-none z-30 flex items-center justify-center">
-             <div className="w-16 h-16 border border-[#00ffcc]/20 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
-                <div className="absolute top-[-2px] left-1/2 w-1 h-2 bg-[#00ffcc]"></div>
-                <div className="absolute bottom-[-2px] left-1/2 w-1 h-2 bg-[#00ffcc]"></div>
+        {/* Thumbnail Strip */}
+        <div className="w-full flex justify-center gap-4 py-6 border-b border-white/20 bg-black z-10 relative px-4 overflow-x-auto">
+           {[1, 2, 3, 4, 5].map(idx => (
+             <div key={idx} className="w-16 h-16 border border-white/20 bg-[#0a0a0a] p-1 
+      hover:border-white transition-colors relative cursor-crosshair flex-shrink-0 group/thumb">
+               <div className="absolute inset-1 border border-white/10 border-dashed group-hover/thumb:border-white/30 z-20"></div>
+               <Image 
+                 src={project.img} 
+                 alt="thumbnail" 
+                 fill 
+                 className="object-cover grayscale opacity-40 group-hover/thumb:opacity-100 p-1 transition-opacity z-10" 
+               />
              </div>
-             <div className="w-1.5 h-1.5 bg-[#00ffcc] rounded-full shadow-[0_0_10px_#00ffcc]"></div>
+           ))}
+        </div>
+
+        {/* Title / Codename Block */}
+        <div className="w-full p-6 md:p-8 border-b border-white/20 bg-black z-10 relative">
+           <div className="flex items-center gap-2 overflow-hidden mb-2">
+             <span className="text-[10px] font-bold tracking-[0.2em] uppercase shrink-0">CODENAME 代號</span>
+             <span className="text-xs text-white/50 tracking-widest whitespace-nowrap opacity-60 font-mono">////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
            </div>
 
-           {/* Image Frame */}
-           <div className="border border-[#00ffcc]/50 p-2 bg-black/40 h-full relative group shadow-[inset_0_0_50px_rgba(0,255,204,0.05)]">
-              {/* Scanning HUD Line */}
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-[#00ffcc] opacity-70 shadow-[0_0_15px_#00ffcc] z-40 animate-[scan_3s_ease-in-out_infinite]"></div>
+           <h1 className="pixel-font text-5xl md:text-7xl lg:text-[90px] tracking-widest text-white uppercase break-all leading-[0.85] mt-4 mb-6 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+             {project.id.replace(/-/g, '_')}_{hash}
+           </h1>
 
-              <div className="w-full h-full relative overflow-hidden bg-black mix-blend-screen isolate flex items-center justify-center">
-                 <img 
-                  src={project.img} 
-                  alt={project.title} 
-                  className="w-full h-full object-cover grayscale contrast-200 brightness-50 sepia-[.2] hue-rotate-[140deg] saturate-[3] mix-blend-lighten group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-hover:sepia-0 group-hover:hue-rotate-0 group-hover:saturate-100 group-hover:mix-blend-normal transition-all duration-[3000ms] ease-out z-10" 
-                />
-                 {/* Cyberpunk dot pattern overlay */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(0,255,204,0.15)_1px,transparent_1px)] bg-[size:10px_10px] z-20 pointer-events-none mix-blend-overlay"></div>
-              </div>
-              
-              {/* Image Coordinate Markers */}
-              <div className="absolute bottom-4 left-4 text-[9px] tracking-[0.3em] font-bold text-[#00ffcc] z-40 bg-black/80 border border-[#00ffcc]/30 px-3 py-1.5 backdrop-blur-md">
-                 LAT: {(Math.random() * 90).toFixed(4)} N // LNG: {(Math.random() * 180).toFixed(4)} W
-              </div>
-              <div className="absolute top-4 right-4 text-[9px] tracking-[0.3em] font-bold text-black z-40 bg-[#00ffcc] px-3 py-1.5 shadow-[0_0_10px_#00ffcc]">
-                 [ LOCK ACQUIRED ]
-              </div>
+           {/* Micro Data Columns */}
+           <div className="grid grid-cols-4 md:grid-cols-6 border-t border-b border-white/20 text-[8px] md:text-[10px] tracking-[0.2em] divide-x divide-white/20 text-center uppercase py-2 opacity-80 tech-font">
+              <div>IP . {project.lang || 'TS'}</div>
+              <div className="hidden md:block">AKIS</div>
+              <div>{project.category}</div>
+              <div>CHAPTER 1</div>
+              <div>PIECE 33</div>
+              <div className="hidden md:block">BLACK</div>
            </div>
         </div>
 
-        {/* Right Intel Panel */}
-        <div className="lg:col-span-3 flex flex-col gap-6 order-3 lg:order-3 h-full">
-           
-           <div className="border border-[#00ffcc]/30 bg-[#0a0a0a]/80 p-6 lg:p-8 backdrop-blur-md h-full flex flex-col relative overflow-hidden group">
-              {/* Deco Grid */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle,rgba(0,255,204,0.1)_1px,transparent_1px)] bg-[size:8px_8px] -mr-8 -mt-8 rounded-full blur-[2px]"></div>
-
-              <h2 className="text-3xl md:text-5xl lg:text-5xl font-space font-black uppercase tracking-tighter mb-8 leading-[0.85] text-white break-words drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
-                {project.title.split(' ').map((word, i) => (
-                  <span key={i} className="block">{word}</span>
-                ))}
-              </h2>
-
-              <div className="border-b-2 border-dashed border-[#00ffcc]/30 pb-2 mb-6">
-                 <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#00ffcc] opacity-80 flex items-center gap-2">
-                    <span className="w-1 h-3 bg-[#00ffcc]"></span>
-                    Mission Intel
-                 </h3>
-              </div>
-              
-              <div className="font-mono text-xs md:text-xs leading-[1.8] opacity-80 uppercase text-justify text-white/70 overflow-auto scrollbar-hide pr-2">
-                 <span className="text-[#00ffcc] mr-2 opacity-100 font-black">{'>'}</span>
-                 {project.longDesc}
-              </div>
-
-              <div className="mt-auto pt-12 relative z-10">
-                <a 
-                  href={project.link} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="w-full flex items-center justify-between border border-[#00ffcc] bg-[#00ffcc]/10 hover:bg-[#00ffcc] hover:text-black transition-all duration-300 px-6 py-4 uppercase font-bold tracking-[0.2em] text-[10px] group/btn hover:shadow-[0_0_20px_rgba(0,255,204,0.4)]"
-                >
-                  <span className="flex items-center gap-2">
-                     <span className="w-1.5 h-1.5 bg-[#00ffcc] group-hover/btn:bg-black group-hover/btn:animate-ping rounded-full"></span>
-                     Execute Directive
-                  </span>
-                  <span className="group-hover/btn:translate-x-2 transition-transform font-space text-lg">→</span>
-                </a>
-              </div>
+        {/* Price / Sub-Metric Block */}
+        <div className="w-full p-6 md:p-8 border-b border-white/20 bg-black z-10 relative">
+           <div className="flex items-center gap-2 overflow-hidden mb-4">
+             <span className="text-[10px] font-bold tracking-[0.2em] uppercase shrink-0">PRICE 価格</span>
+             <span className="text-xs text-white/50 tracking-widest whitespace-nowrap opacity-60 font-mono">////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
            </div>
 
+           <h2 className="pixel-font text-5xl md:text-7xl lg:text-[80px] tracking-wide text-white uppercase leading-none mb-6">
+             {hash * 10}.00 SYS
+           </h2>
+
+           <div className="grid grid-cols-4 md:grid-cols-7 border-t border-b border-white/20 text-[8px] md:text-[10px] tracking-[0.2em] divide-x divide-white/20 text-center uppercase py-2 opacity-80 tech-font mb-6">
+              <div>10</div>
+              <div>THOUSAND</div>
+              <div className="hidden md:block">6</div>
+              <div>HUNDRED</div>
+              <div className="hidden md:block">00</div>
+              <div className="hidden md:block">Republic</div>
+              <div>System</div>
+           </div>
+        </div>
+
+        {/* Specs Box Row */}
+        <div className="w-full grid grid-cols-4 md:grid-cols-7 border-b border-white/20 bg-black z-10 relative divide-x divide-white/20">
+           <div className="p-4 md:p-6 bg-white text-black flex flex-col justify-between col-span-2 md:col-span-1 shadow-[inset_0_0_20px_rgba(0,0,0,0.1)]">
+             <div className="text-[9px] font-bold tracking-widest mb-4 uppercase">SIZE 大小</div>
+             <div className="pixel-font text-5xl md:text-6xl text-center leading-none">S</div>
+           </div>
+
+           <div className="p-4 md:p-6 text-white flex flex-col justify-between hover:bg-white/10 transition-colors cursor-crosshair">
+             <div className="text-[9px] font-bold tracking-widest mb-4 opacity-50 uppercase">SIZE 大小</div>
+             <div className="pixel-font text-5xl md:text-6xl text-center leading-none">M</div>
+           </div>
+
+           <div className="p-4 md:p-6 text-white flex flex-col justify-between hover:bg-white/10 transition-colors cursor-crosshair">
+             <div className="text-[9px] font-bold tracking-widest mb-4 opacity-50 uppercase">SIZE 大小</div>
+             <div className="pixel-font text-5xl md:text-6xl text-center leading-none">L</div>
+           </div>
+
+           <div className="p-4 md:p-6 text-white flex flex-col justify-between hover:bg-white/10 transition-colors cursor-crosshair col-span-2 md:col-span-1 border-t md:border-t-0 border-white/20 md:border-0">
+             <div className="text-[9px] font-bold tracking-widest mb-4 opacity-50 uppercase">QUANTITY 数量</div>
+             <div className="pixel-font text-5xl md:text-6xl text-center leading-none">01</div>
+           </div>
+
+           <div className="flex-col divide-y divide-white/20 text-white border-t md:border-t-0 border-white/20 md:border-0 hidden md:flex">
+              <div className="flex-1 flex items-center justify-center text-4xl font-light hover:bg-white/20 transition-colors cursor-crosshair hover:text-black hover:font-bold">+</div>
+              <div className="flex-1 flex items-center justify-center text-4xl font-light hover:bg-white/20 transition-colors cursor-crosshair hover:text-black hover:font-bold">-</div>
+           </div>
+           
+           <div className="p-4 md:p-6 text-white flex flex-col justify-between hover:bg-white/10 transition-colors cursor-crosshair col-span-2 md:col-span-2 border-t md:border-t-0 border-white/20 md:border-l border-white/20">
+             <div className="text-[9px] font-bold tracking-widest mb-4 opacity-50 uppercase">COLOR 顏色</div>
+             <div className="pixel-font text-5xl md:text-6xl text-center leading-none">BK</div>
+           </div>
+        </div>
+
+        {/* Data & Description Block */}
+        <div className="w-full p-6 md:p-8 border-b border-white/20 bg-black z-10 relative">
+          <div className="flex items-center gap-2 overflow-hidden mb-4">
+            <span className="text-[10px] font-bold tracking-[0.2em] uppercase shrink-0">DATA 認証</span>
+            <span className="text-xs text-white/50 tracking-widest whitespace-nowrap opacity-60 font-mono">////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
+          </div>
+          
+          <h2 className="tech-font text-xl md:text-2xl font-bold uppercase tracking-widest mb-4 text-white">
+             {project.title}
+          </h2>
+          <div className="tech-font text-sm md:text-base leading-relaxed text-white/80 max-w-4xl opacity-90">
+            {project.longDesc}
+          </div>
+        </div>
+
+        {/* Buttons Action Group */}
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 p-6 md:p-8 border-b border-white/20 bg-black z-10 relative">
+           
+           {/* Primary Button */}
+           <a href={project.link} target="_blank" className="bg-black p-6 md:p-8 relative group hover:bg-[#1a1a1a] transition-all cursor-crosshair block overflow-hidden shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]">
+              {/* Box Corner Brackets */}
+              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-top-left"></div>
+              <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-top-right"></div>
+              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-bottom-left"></div>
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-bottom-right"></div>
+              
+              <div className="flex justify-between items-end h-full mt-2 relative z-10">
+                <div className="pr-4">
+                  <div className="text-2xl md:text-3xl font-medium tracking-wider mb-2 font-sans leading-none">Add to cart</div>
+                  <div className="text-lg font-bold tracking-[0.2em] font-sans">起動する</div>
+                </div>
+                <div className="text-4xl font-light mb-1 opacity-50 group-hover:translate-x-3 group-hover:opacity-100 transition-all">→</div>
+              </div>
+           </a>
+
+           {/* Secondary Button */}
+           <Link href="/" className="bg-black p-6 md:p-8 relative group hover:bg-[#1a1a1a] transition-all cursor-crosshair block overflow-hidden shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]">
+              {/* Box Corner Brackets */}
+              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-top-left"></div>
+              <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-top-right"></div>
+              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-bottom-left"></div>
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white opacity-80 group-hover:scale-110 transition-transform origin-bottom-right"></div>
+              
+              <div className="flex justify-between items-end h-full mt-2 relative z-10">
+                <div className="pr-4">
+                  <div className="text-2xl md:text-3xl font-medium tracking-wider mb-2 font-sans leading-none">Pay later</div>
+                  <div className="text-lg font-bold tracking-[0.2em] font-sans">戻る</div>
+                </div>
+                <div className="text-4xl font-light mb-1 opacity-50 group-hover:translate-x-3 group-hover:opacity-100 transition-all">→</div>
+              </div>
+           </Link>
+        </div>
+
+        {/* Specifications Dropdown Row */}
+        <div className="w-full bg-black p-6 flex flex-col md:flex-row items-start md:items-center justify-between border-b border-white/20 z-10 relative hover:bg-white/5 cursor-crosshair transition-colors">
+           <div className="flex items-center gap-6">
+             <div className="w-12 h-12 border border-white/80 flex items-center justify-center text-4xl bg-[#111] overflow-hidden group-hover:bg-white group-hover:text-black transition-colors">
+               <span className="pixel-font mt-2">▧</span>
+             </div>
+             <div>
+               <div className="text-xl md:text-2xl tracking-wide mb-1 font-sans">Specifications</div>
+               <div className="text-sm tracking-[0.2em] font-bold">仕様</div>
+             </div>
+           </div>
+           <div className="w-12 border-t-2 border-white mt-6 md:mt-0"></div>
         </div>
 
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes scan {
-          0% { top: 0; opacity: 0; }
-          5% { opacity: 0.8; }
-          95% { opacity: 0.8; }
-          100% { top: 100%; opacity: 0; }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
         
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-        .scrollbar-hide {
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
+        .pixel-font { font-family: 'VT323', monospace; font-weight: 400; font-style: normal; }
+        .tech-font { font-family: 'Share Tech Mono', monospace; font-weight: 400; font-style: normal; }
+        
+        body::-webkit-scrollbar { width: 6px; }
+        body::-webkit-scrollbar-track { background: #000; border-left: 1px solid rgba(255,255,255,0.2); }
+        body::-webkit-scrollbar-thumb { background: #fff; }
+        body { scrollbar-width: thin; scrollbar-color: #fff #000; cursor: crosshair; }
+        
+        a, button, .cursor-crosshair {
+          cursor: crosshair !important;
         }
       `}} />
     </main>
