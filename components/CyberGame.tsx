@@ -1,193 +1,250 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import { useEffect, useRef, useState } from "react";
 
 export default function CyberGame() {
-  const mountRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
-    if (!mountRef.current) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    // Scene Setup
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x020202, 0.015);
-
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      mountRef.current.clientWidth / mountRef.current.clientHeight,
-      0.1,
-      1000
-    );
-    camera.position.z = 10;
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
-    renderer.setClearColor(0x020202, 1);
-    mountRef.current.appendChild(renderer.domElement);
-
-    // Obstacles
-    const boxCount = 150;
-    const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
-    const material = new THREE.MeshBasicMaterial({ 
-      color: 0xffffff, 
-      wireframe: true, 
-      transparent: true, 
-      opacity: 0.6 
-    });
-    
-    // InstancedMesh for performance
-    const instancedMesh = new THREE.InstancedMesh(geometry, material, boxCount);
-    scene.add(instancedMesh);
-
-    const dummy = new THREE.Object3D();
-    const boxesData = Array.from({ length: boxCount }).map(() => ({
-      position: [
-        (Math.random() - 0.5) * 60,
-        (Math.random() - 0.5) * 40,
-        -Math.random() * 400 - 50,
-      ],
-      speed: Math.random() * 1.5 + 0.5,
-      rotationSpeed: [Math.random() * 0.05, Math.random() * 0.05, Math.random() * 0.05],
-    }));
-
-    // Player Object
-    const playerGeo = new THREE.OctahedronGeometry(0.8, 0);
-    const playerMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-    const playerMesh = new THREE.Mesh(playerGeo, playerMat);
-    playerMesh.position.z = 5;
-    scene.add(playerMesh);
-
-    // Grids
-    const gridBottom = new THREE.GridHelper(100, 40, 0xffffff, 0x111111);
-    gridBottom.position.set(0, -10, -50);
-    scene.add(gridBottom);
-
-    const gridTop = new THREE.GridHelper(100, 40, 0xffffff, 0x111111);
-    gridTop.position.set(0, 10, -50);
-    scene.add(gridTop);
-
-    // Mouse Tracking
-    const pointer = { x: 0, y: 0 };
-    const onMouseMove = (event: MouseEvent) => {
-      const rect = mountRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      // Normalize bounds from -1 to +1
-      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    };
-    window.addEventListener("mousemove", onMouseMove);
-
-    // Animation Loop
     let animationId: number;
-    const clock = new THREE.Clock();
+    
+    // Core game structures inside a local coordinate matrix (800x500)
+    const bird = { x: 100, y: 250, width: 20, height: 20, velocity: 0, gravity: 0.4, jump: -7 };
+    const pipes: { x: number, y: number, width: number, gap: number, passed: boolean }[] = [];
+    let frame = 0;
+    let currentScore = 0;
+    let isGameOver = false;
 
-    const animate = () => {
-      animationId = requestAnimationFrame(animate);
-      const delta = clock.getDelta();
+    const spawnPipe = () => {
+      const gap = 130; // Challenge gap
+      const minHeight = 50;
+      const maxHeight = canvas.height - gap - minHeight;
+      const height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+      
+      pipes.push({
+        x: canvas.width,
+        y: height,
+        width: 60,
+        gap: gap,
+        passed: false
+      });
+    };
 
-      // Viewport projection limits
-      const mapX = pointer.x * 20; // 20 units world space half-width
-      const mapY = pointer.y * 15;
+    const resetGame = () => {
+      bird.y = canvas.height / 2;
+      bird.velocity = 0;
+      pipes.length = 0;
+      frame = 0;
+      currentScore = 0;
+      setScore(0);
+      isGameOver = false;
+      setGameOver(false);
+      setGameStarted(true);
+    };
 
-      // Smooth follow player mapped to world space
-      playerMesh.position.x += (mapX - playerMesh.position.x) * 0.15;
-      playerMesh.position.y += (mapY - playerMesh.position.y) * 0.15;
+    const triggerGameOver = () => {
+      if (isGameOver) return; // Prevent double trigger
+      isGameOver = true;
+      setGameOver(true);
+      setHighScore(prev => Math.max(prev, currentScore));
+    };
 
-      // Bank player ship
-      playerMesh.rotation.z = -pointer.x * 0.8;
-      playerMesh.rotation.x = pointer.y * 0.5;
+    const update = () => {
+      if (isGameOver) return;
+      frame++;
 
-      // Move Grid Tunnel
-      gridBottom.position.z += delta * 20;
-      if (gridBottom.position.z > 20) gridBottom.position.z = 0;
-      gridTop.position.z += delta * 20;
-      if (gridTop.position.z > 20) gridTop.position.z = 0;
+      // Bird physics: Terminal velocity cap and gravity
+      bird.velocity += bird.gravity;
+      // Cap falling speed
+      if (bird.velocity > 12) bird.velocity = 12;
+      bird.y += bird.velocity;
 
-      // Move Obstacles
-      boxesData.forEach((box, i) => {
-        box.position[2] += box.speed * delta * 60;
-        if (box.position[2] > 10) {
-          box.position[2] = -400;
-          box.position[0] = (Math.random() - 0.5) * 60;
-          box.position[1] = (Math.random() - 0.5) * 40;
+      // Floor / Ceiling collision
+      if (bird.y + bird.height >= canvas.height || bird.y <= 0) {
+        triggerGameOver();
+      }
+
+      // Pipe generation timing
+      if (frame % 100 === 0) {
+        spawnPipe();
+      }
+
+      // Pipe updates & bounding box collision mapping
+      for (let i = pipes.length - 1; i >= 0; i--) {
+        const p = pipes[i];
+        p.x -= 3.5; // game speed
+
+        // Collision logic
+        if (
+          bird.x < p.x + p.width &&
+          bird.x + bird.width > p.x &&
+          (bird.y < p.y || bird.y + bird.height > p.y + p.gap)
+        ) {
+          triggerGameOver();
         }
 
-        dummy.position.set(box.position[0], box.position[1], box.position[2]);
-        dummy.rotation.x += box.rotationSpeed[0];
-        dummy.rotation.y += box.rotationSpeed[1];
-        dummy.rotation.z += box.rotationSpeed[2];
-        dummy.updateMatrix();
-        instancedMesh.setMatrixAt(i, dummy.matrix);
-      });
-      instancedMesh.instanceMatrix.needsUpdate = true;
+        // Score logic
+        if (p.x + p.width < bird.x && !p.passed) {
+          p.passed = true;
+          currentScore += 1;
+          setScore(currentScore);
+        }
 
-      // Render
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
-    const handleResize = () => {
-      if (!mountRef.current) return;
-      camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
-    };
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationId);
-      if (mountRef.current && renderer.domElement) {
-        mountRef.current.removeChild(renderer.domElement);
+        // Garbage collect offscreen pipes
+        if (p.x + p.width < 0) {
+          pipes.splice(i, 1);
+        }
       }
-      renderer.dispose();
-      // Dispose materials/geometry to free up GPU handles
-      geometry.dispose();
-      material.dispose();
-      playerGeo.dispose();
-      playerMat.dispose();
     };
-  }, []);
+
+    const draw = () => {
+      // Clear matrix
+      ctx.fillStyle = "#020202";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Grid / Cyberpunk wireframes background
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+      ctx.lineWidth = 1;
+      const offset = (frame * 1.5) % 40;
+      for (let i = 0; i < canvas.width; i += 40) {
+        ctx.beginPath();
+        ctx.moveTo(i - offset, 0);
+        ctx.lineTo(i - offset, canvas.height);
+        ctx.stroke();
+      }
+      for (let i = 0; i < canvas.height; i += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvas.width, i);
+        ctx.stroke();
+      }
+
+      // Draw Firewall Pipes
+      pipes.forEach(p => {
+        // Outer boundaries White
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(p.x, 0, p.width, p.y);
+        ctx.fillRect(p.x, p.y + p.gap, p.width, canvas.height - p.y - p.gap);
+        
+        // Inner edge energy beams Cyan
+        ctx.fillStyle = "rgba(0, 255, 204, 0.8)";
+        ctx.fillRect(p.x, p.y - 6, p.width, 6);
+        ctx.fillRect(p.x, p.y + p.gap, p.width, 6);
+      });
+
+      // Draw Drone (Bird)
+      ctx.save();
+      ctx.translate(bird.x + bird.width / 2, bird.y + bird.height / 2);
+      ctx.rotate(Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (bird.velocity * 0.1))));
+      
+      // Core Glow
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "#00ffcc";
+      ctx.fillStyle = "#00ffcc";
+      ctx.fillRect(-bird.width / 2, -bird.height / 2, bird.width, bird.height);
+      ctx.shadowBlur = 0;
+      
+      // Core Matrix Plate
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-bird.width / 2 + 4, -bird.height / 2 + 4, bird.width - 8, bird.height - 8);
+      ctx.restore();
+    };
+
+    const loop = () => {
+      // Allow initial idle animation drawing
+      if (!gameStarted && !isGameOver) {
+        draw();
+      } else {
+        update();
+        draw();
+      }
+
+      if (!isGameOver || gameOver) {
+         animationId = requestAnimationFrame(loop);
+      }
+    };
+
+    // Begin looping
+    animationId = requestAnimationFrame(loop);
+
+    const handleInput = (e: Event) => {
+      e.preventDefault();
+      if (!gameStarted || isGameOver) {
+        resetGame();
+      } else {
+        bird.velocity = bird.jump;
+      }
+    };
+
+    canvas.addEventListener("mousedown", handleInput);
+    canvas.addEventListener("touchstart", handleInput);
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space") handleInput(e as unknown as Event);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      canvas.removeEventListener("mousedown", handleInput);
+      canvas.removeEventListener("touchstart", handleInput);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [gameStarted, gameOver]);
 
   return (
-    <div className="w-full relative select-none overflow-hidden cursor-crosshair bg-[#020202] group h-[60vh] md:h-[80vh] border border-white/20 p-2">
+    <div className="w-full relative select-none overflow-hidden cursor-crosshair bg-[#020202] group h-[60vh] md:h-[80vh] border border-white/20 p-2 font-mono flex flex-col items-center justify-center">
       
+      {/* Corner Brackets */}
+      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white/40 pointer-events-none z-10"></div>
+      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-white/40 pointer-events-none z-10"></div>
+      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-white/40 pointer-events-none z-10"></div>
+      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white/40 pointer-events-none z-10"></div>
+
       {/* HUD Info */}
-      <div className="absolute top-6 left-6 z-10 font-mono text-[10px] uppercase tracking-widest text-white opacity-80 pointer-events-none transition-opacity">
-        <div className="font-bold">SYS.BREACH.SIMULATOR // [EXECUTE]</div>
-        <div className="text-white/40 mt-1 uppercase tracking-[0.3em]">Calibrate input variables</div>
-        <div className="text-[#00ffcc] mt-4 animate-pulse">Use cursor to navigate target matrix</div>
+      <div className="absolute top-6 left-6 z-10 text-[10px] uppercase tracking-widest text-white opacity-80 pointer-events-none transition-opacity">
+        <div className="font-bold">FLIGHT.SIMULATOR // [EXECUTE]</div>
+        <div className="text-white/40 mt-1 uppercase tracking-[0.3em]">SYS.STATUS: {gameOver ? 'CRITICAL FAILURE' : 'ONLINE'}</div>
+        <div className="text-[#00ffcc] mt-4 font-bold text-4xl">{score}</div>
       </div>
       
       {/* Status Indicators */}
-      <div className="absolute bottom-6 left-6 z-10 font-mono text-[8px] uppercase tracking-[0.2em] text-white/50 pointer-events-none flex gap-8">
-         <div>LIFESUPPORT: ONLINE</div>
-         <div>RADAR: ENGAGED</div>
-      </div>
-      
-      <div className="absolute bottom-6 right-6 z-10 font-mono text-[8px] uppercase tracking-[0.2em] text-white/50 pointer-events-none">
-         V 1.0.1.0
+      <div className="absolute bottom-6 left-6 z-10 text-[10px] uppercase tracking-[0.3em] font-bold text-white/50 pointer-events-none flex gap-8">
+         <div className="text-white">HIGH SCORE: {highScore}</div>
+         <div className="hidden md:block">INPUT: SPACE / CLICK</div>
       </div>
 
-      {/* Target Reticle */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 pointer-events-none z-10 opacity-30 flex items-center justify-center">
-         <div className="w-1 h-3 bg-white absolute top-[-10px]"></div>
-         <div className="w-1 h-3 bg-white absolute bottom-[-10px]"></div>
-         <div className="w-3 h-1 bg-white absolute left-[-10px]"></div>
-         <div className="w-3 h-1 bg-white absolute right-[-10px]"></div>
-         <div className="w-1 h-1 bg-white/50 rounded-full animate-ping"></div>
-      </div>
+      {/* Start / Reboot Screen */}
+      {(!gameStarted || gameOver) && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none bg-black/40 backdrop-blur-[2px]">
+          <h2 className="text-4xl text-white font-bold tracking-widest mb-4">
+            {gameOver ? "SYSTEM CRASH" : "SYSTEM READY"}
+          </h2>
+          <p className="text-[#00ffcc] text-xs md:text-sm tracking-[0.3em] animate-pulse font-bold bg-black/50 px-4 py-2 border border-[#00ffcc]">
+            CLICK OR PRESS SPACE TO {gameOver ? "REBOOT" : "INITIATE"}
+          </p>
+        </div>
+      )}
 
-      {/* Vanilla ThreeJS Container */}
-      <div ref={mountRef} className="absolute inset-0 z-0 bg-[#020202]"></div>
+      {/* 2D Canvas Engine */}
+      <canvas 
+        ref={canvasRef} 
+        width={800} 
+        height={500} 
+        className="w-full h-full object-contain md:object-cover z-0 opacity-80"
+      />
         
       {/* VHS / Scanline Effects Overlay */}
       <div className="absolute inset-0 pointer-events-none mix-blend-screen bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-30 z-20"></div>
-      <div className="absolute inset-0 pointer-events-none mix-blend-overlay bg-[radial-gradient(circle,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:10px_10px] opacity-40 z-20"></div>
     </div>
   );
 }
