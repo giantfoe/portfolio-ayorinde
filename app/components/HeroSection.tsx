@@ -153,19 +153,6 @@ export default function HeroSection() {
           transition={{ duration: 1.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="relative z-30 md:z-50 w-full max-w-[750px] md:max-w-[1120px] lg:max-w-[1310px] aspect-square flex items-center justify-center mt-[-20px] sm:mt-10 md:mt-[150px] lg:mt-[50px] xl:-mt-[490px] pointer-events-none"
         >
-          {/* Obscure Kicker Text Above Image Head */}
-          <motion.div 
-            initial={{ opacity: 0, rotate: -15, y: 20 }}
-            animate={{ opacity: 1, rotate: -5, y: 0 }}
-            transition={{ duration: 1.5, delay: 0.8 }}
-            className="absolute top-[6%] sm:top-[4%] md:top-[10%] right-[15%] sm:right-[25%] md:right-[35%] z-[60] flex flex-col items-start gap-1 text-[10px] sm:text-[12px] md:text-[14px] font-space font-bold uppercase tracking-[0.3em] text-[#1a1a1a] drop-shadow-sm"
-          >
-            <span className="ml-8 text-[#ff3d00]">[NO]</span>
-            <span className="ml-2">2 SECTIONS</span>
-            <span className="ml-6">—ARE</span>
-            <span className="ml-0">THE SAME.</span>
-          </motion.div>
-
           <motion.div className="relative w-full h-full transform scale-[1.2] md:scale-100 origin-top" style={{ y: yParallax }}>
             <Image 
               src="/images/MYHOMEPAGE.webp" 
@@ -179,6 +166,17 @@ export default function HeroSection() {
         </motion.div>
 
       </div>
+
+      {/* Corner Kicker Text */}
+      <motion.div 
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1, delay: 1.2 }}
+        className="absolute bottom-8 left-6 md:left-16 z-[60] flex flex-col items-start gap-0.5 text-[9px] sm:text-[11px] md:text-[12px] font-space font-bold uppercase tracking-[0.3em] text-[#1a1a1a]"
+      >
+        <span className="text-[#ff3d00]">[NO] 2 SECTIONS</span>
+        <span className="text-[#1a1a1a]/70">ARE THE SAME.</span>
+      </motion.div>
 
       {/* Decorative lines/elements */}
       <div className="absolute top-1/2 left-0 w-full h-[1px] bg-black/[0.03] -translate-y-1/2 z-0 hidden lg:block" />
