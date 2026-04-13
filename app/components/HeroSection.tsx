@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Image from 'next/image';
 
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
@@ -48,7 +48,8 @@ const DecryptText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
 export default function HeroSection() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { scrollY } = useScroll();
-  const yParallax = useTransform(scrollY, [0, 1000], [0, 300]);
+  const yParallaxRaw = useTransform(scrollY, [0, 1000], [0, 300]);
+  const yParallax = useSpring(yParallaxRaw, { stiffness: 400, damping: 90 });
 
   return (
     <section id="home" className="relative min-h-screen w-full bg-[#fdfaf6] flex flex-col font-outfit overflow-hidden">
@@ -117,16 +118,16 @@ export default function HeroSection() {
       </nav>
 
       {/* HERO CONTENT */}
-      <div className="relative flex-1 flex flex-col md:items-center justify-start md:justify-center px-6 md:px-16 pt-32 md:pt-32 pb-0 z-10 w-full max-w-[1440px] mx-auto overflow-visible">
+      <div className="relative flex-1 flex flex-col items-center justify-start md:justify-center px-6 md:px-16 pt-32 md:pt-32 pb-0 z-10 w-full max-w-[1440px] mx-auto overflow-visible">
         
         {/* MAIN TITLE - RESPONSIVE SIZES */}
-        <div className="w-full relative flex flex-col items-start md:items-center text-left md:text-center mt-8 md:mt-0 mb-4 md:mb-0 z-40">
+        <div className="w-full relative flex flex-col items-center text-center mt-12 md:mt-16 lg:mt-24 xl:mt-32 2xl:mt-40 mb-4 md:mb-0" style={{ zIndex: 1 }}>
 
           <motion.h1 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[17vw] sm:text-[15vw] md:text-8xl lg:text-[12vw] xl:text-[10vw] font-space font-black uppercase leading-[0.85] tracking-tight text-[#1a1a1a]"
+            className="text-[25vw] sm:text-[22vw] md:text-[18vw] lg:text-[16vw] xl:text-[217px] 2xl:text-[240px] font-space font-black uppercase leading-[0.85] tracking-tight text-[#1a1a1a] relative whitespace-nowrap"
           >
             <span className="block md:inline"><DecryptText text="Design" delay={0.2} /></span>
             <span className="hidden md:inline">{" "}</span>
@@ -140,18 +141,19 @@ export default function HeroSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1 }}
-            className="mt-8 md:hidden text-xs sm:text-sm max-w-[240px] sm:max-w-[280px] font-inter text-gray-500 lowercase italic leading-relaxed z-40"
+            className="mt-8 md:hidden text-xs sm:text-sm max-w-[240px] sm:max-w-[280px] font-inter text-gray-500 lowercase italic leading-relaxed"
           >
             / Building digital architecture, motion, and brand systems for the modern web edge.
           </motion.p>
         </div>
 
-        {/* Central Artwork */}
+        {/* Central Artwork - MUST be above text */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 1.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-30 md:z-50 w-full max-w-[750px] md:max-w-[1120px] lg:max-w-[1310px] aspect-square flex items-center justify-center mt-[-20px] sm:mt-10 md:mt-[150px] lg:mt-[50px] xl:-mt-[490px] pointer-events-none"
+          style={{ zIndex: 50 }}
+          className="relative w-full max-w-[750px] md:max-w-[850px] lg:max-w-[950px] xl:max-w-[1050px] 2xl:max-w-[1150px] aspect-square flex items-center justify-center mt-[20px] sm:mt-[20px] md:mt-[-22vw] lg:mt-[-22vw] xl:mt-[40px] 2xl:mt-[80px] "
         >
           <motion.div className="relative w-full h-full transform scale-[1.2] md:scale-100 origin-top" style={{ y: yParallax }}>
             <Image 
